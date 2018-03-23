@@ -18,9 +18,9 @@ if (process.argv[2] === "my-tweets") {
     getSong();
 } else if (process.argv[2] === "movie-this") {
     getMovie();
-} // else if (process.argv[2] === "do-what-it-says") {
-//     whatItSays();
-// };
+} else if (process.argv[2] === "do-what-it-says") {
+    whatItSays();
+};
 
 function getTweets() {
     var params = {
@@ -80,5 +80,31 @@ function getMovie() {
                     console.log("Plot: " + JSON.parse(body).Plot);
                     console.log("Actors: " + JSON.parse(body).Actors);
                 }
+    });
+};
+
+function whatItSays() {
+    fs.readFile("random.txt", "utf8", function(error, data) {
+
+        // If the code experiences any errors it will log the error to the console.
+        if (error) {
+          return console.log(error);
+        }
+        
+        var randomArray = data.split(",");
+        var songInput = randomArray[1];
+
+        spotify.search({
+            type: 'track',
+            query: songInput
+        }, function (err, data) {
+            if (err) {
+                return console.log('Error occurred: ' + err);
+            }
+            console.log("Artist Name: " + data.tracks.items[0].artists[0].name);
+            console.log("\nSong Name: " + data.tracks.items[0].name);
+            console.log("\nSong Link: " + data.tracks.items[0].preview_url);
+            console.log("\nAlbum Name: " + data.tracks.items[0].album.name);
+        });
     });
 };
